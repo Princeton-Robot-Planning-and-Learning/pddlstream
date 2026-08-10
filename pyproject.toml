@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=64", "cmake>=3.10"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pddlstream"
+version = "0.1.0"
+description = "PDDLStream: Integrating Symbolic Planners and Blackbox Samplers"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+dependencies = ["numpy"]
+
+[project.urls]
+Upstream = "https://github.com/caelan/pddlstream"
+
+[project.optional-dependencies]
+# Imported lazily inside pddlstream.algorithms.visualization.
+viz = ["pygraphviz", "matplotlib"]
+# Imported lazily by pddlstream.utils.get_peak_memory.
+memory = ["psutil"]
+
+[tool.setuptools.packages.find]
+include = ["pddlstream*"]
+
+[tool.setuptools.package-data]
+# The FastDownward search binary, compiled by setup.py at build time. Only the binary is
+# shipped: pddlstream imports the translator from pddlstream._translate, so the copy CMake
+# leaves in builds/release/bin/translate/ is inert.
+pddlstream = ["_downward/builds/release/bin/downward"]
+"pddlstream._translate" = ["README.md"]

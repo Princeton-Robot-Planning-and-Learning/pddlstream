@@ -1,0 +1,14 @@
+# The sdist must carry everything setup.py needs to compile FastDownward, but none of
+# the output of having done so.
+include LICENSE
+include README.md
+include pddlstream/_downward/build.py
+include pddlstream/_downward/build_configs.py
+include pddlstream/_downward/LICENSE.md
+recursive-include pddlstream/_downward/src *
+recursive-include pddlstream/_downward/driver *
+include pddlstream/_translate/README.md
+
+prune pddlstream/_downward/builds
+global-exclude __pycache__
+global-exclude *.py[cod]
