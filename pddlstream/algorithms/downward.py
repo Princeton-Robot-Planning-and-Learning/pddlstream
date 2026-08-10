@@ -29,40 +29,50 @@ assert not USE_CERBERUS or not USE_FORBID
 
 ##################################################
 
-filepath = os.path.abspath(__file__)
-if ' ' in filepath:
-    raise RuntimeError('The path to pddlstream cannot include spaces')
-
 def find_build(fd_path):
     for release in ['release', 'release64', 'release32']:  # TODO: list the directory
         path = os.path.join(fd_path, 'builds/{}/'.format(release))
         if os.path.exists(path):
             return path
     # TODO: could also just automatically compile
-    raise RuntimeError('Please compile FastDownward first [.../pddlstream$ ./downward/build.py]')
+    raise RuntimeError(
+        'Could not find a FastDownward build under {0}. It is normally built at install '
+        'time; reinstall the package, or build it in place with `python {0}/build.py`, '
+        'or set FD_PATH to a directory that has builds/release/.'.format(
+            os.path.abspath(fd_path)))
 
 # TODO: check at runtime so users can use utils without FD
-FD_PATH = get_file_path(__file__, '../../downward/')
-#FD_PATH = get_file_path(__file__, '../../FastDownward/')
-TRANSLATE_PATH = os.path.join(find_build(FD_PATH), 'bin/translate')
+FD_PATH = os.environ.get('FD_PATH') or get_file_path(__file__, '../_downward/')
+
+# run_search interpolates FD_BIN into a shell command, so a space anywhere above the
+# binary breaks the search call. Post-install that path is site-packages, which the user
+# does not choose, hence the FD_PATH escape hatch rather than a bare failure.
+if ' ' in os.path.abspath(FD_PATH):
+    raise RuntimeError(
+        'The path to FastDownward cannot include spaces: {}. Set FD_PATH to a '
+        'space-free directory holding builds/release/.'.format(FD_PATH))
 FD_BIN = os.path.join(find_build(CERBERUS_PATH if USE_CERBERUS else FD_PATH), 'bin')
 
 DOMAIN_INPUT = 'domain.pddl'
 PROBLEM_INPUT = 'problem.pddl'
 TRANSLATE_FLAGS = [] #if USE_CERBERUS else ['--negative-axioms']
+
+# The translator is vendored at pddlstream/_translate rather than read off
+# builds/release/bin/translate, so importing it no longer puts `pddl`, `options`, `tools`
+# and friends on sys.path as top-level names. See pddlstream/_translate/README.md.
+# _translate.options still parses sys.argv at import time, hence the swap below.
 original_argv = sys.argv[:]
 sys.argv = sys.argv[:1] + TRANSLATE_FLAGS + [DOMAIN_INPUT, PROBLEM_INPUT]
-sys.path.append(TRANSLATE_PATH)
 # TODO: max translate time
 
-import pddl.f_expression
-import pddl
-import instantiate
-import pddl_parser.lisp_parser
-import normalize
-import pddl_parser
-from pddl_parser.parsing_functions import parse_domain_pddl, parse_task_pddl, \
-    parse_condition, check_for_duplicates
+import pddlstream._translate.pddl.f_expression
+import pddlstream._translate.pddl as pddl
+import pddlstream._translate.instantiate as instantiate
+import pddlstream._translate.pddl_parser.lisp_parser
+import pddlstream._translate.normalize as normalize
+import pddlstream._translate.pddl_parser as pddl_parser
+from pddlstream._translate.pddl_parser.parsing_functions import parse_domain_pddl, \
+    parse_task_pddl, parse_condition, check_for_duplicates
 sys.argv = original_argv
 
 TEMP_DIR = 'temp/'
