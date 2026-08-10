@@ -12,10 +12,10 @@ from pddlstream.language.constants import is_parameter
 from pddlstream.utils import flatten, apply_mapping, MockSet, elapsed_time, Verbose, safe_remove, ensure_dir, \
     str_from_object, user_input, Profiler
 
-import pddl
-import instantiate
-import translate
-import normalize
+import pddlstream._translate.pddl as pddl
+import pddlstream._translate.instantiate as instantiate
+import pddlstream._translate.translate as translate
+import pddlstream._translate.normalize as normalize
 
 FD_INSTANTIATE = True
 
@@ -200,12 +200,12 @@ def instantiate_task(task, check_infeasible=True, use_fd=FD_INSTANTIATE, **kwarg
 ##################################################
 
 def sas_from_instantiated(instantiated_task):
-    import timers
-    import fact_groups
-    import options
-    import simplify
-    import variable_order
-    from translate import translate_task, unsolvable_sas_task, strips_to_sas_dictionary, \
+    import pddlstream._translate.timers as timers
+    import pddlstream._translate.fact_groups as fact_groups
+    import pddlstream._translate.options as options
+    import pddlstream._translate.simplify as simplify
+    import pddlstream._translate.variable_order as variable_order
+    from pddlstream._translate.translate import translate_task, unsolvable_sas_task, strips_to_sas_dictionary, \
         build_implied_facts, build_mutex_key, solvable_sas_task
     start_time = time()
     print()
@@ -298,10 +298,10 @@ def translate_and_write_pddl(domain_pddl, problem_pddl, temp_dir, verbose):
 def convert_instantiated(instantiated_task, verbose=False):
     task, atoms, actions, axioms, reachable_action_params, goal_list = instantiated_task
     normalize.normalize(task)
-    import axiom_rules
+    import pddlstream._translate.axiom_rules as axiom_rules
     #axioms, axiom_init, axiom_layer_dict = axiom_rules.handle_axioms(actions, axioms, goal_list)
     #init = task.init + axiom_init
-    import options
+    import pddlstream._translate.options as options
     with Verbose(verbose):
         axioms, axiom_layers = axiom_rules.handle_axioms(actions, axioms, goal_list, options.layer_strategy)
     init = task.init

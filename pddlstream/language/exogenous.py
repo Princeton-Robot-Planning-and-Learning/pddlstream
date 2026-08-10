@@ -143,7 +143,8 @@ def get_exogenous_predicates(domain, streams):
     return list(get_fluents(domain) & get_domain_predicates(streams))
 
 def replace_literals(replace_fn, expression, *args):
-    import pddl.conditions
+    import pddlstream._translate.pddl.conditions
+    import pddlstream._translate.pddl as pddl
     if isinstance(expression, pddl.conditions.ConstantCondition):
         return expression # TODO: replace constants?
     if isinstance(expression, pddl.conditions.JunctorCondition):
@@ -167,7 +168,7 @@ def replace_predicates(predicate_map, expression):
 def compile_to_exogenous_axioms(evaluations, domain, streams):
     # TODO: no attribute certified
     # TODO: recover the streams that are required
-    import pddl
+    import pddlstream._translate.pddl as pddl
     fluent_predicates = get_fluents(domain)
     certified_predicates = {get_prefix(a) for s in streams for a in s.certified}
     future_map = {p: 'f-{}'.format(p) for p in certified_predicates}

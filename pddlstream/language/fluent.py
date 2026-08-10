@@ -35,7 +35,7 @@ def compile_fluent_streams(domain, externals):
 
     # TODO: could make free parameters free
     # TODO: could treat like a normal stream that generates values (but with no inputs required/needed)
-    import pddl
+    import pddlstream._translate.pddl as pddl
     def fn(literal, action):
         if literal.predicate not in predicate_map:
             return literal

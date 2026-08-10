@@ -20,14 +20,14 @@ def get_steps_from_stream(stream_plan, step_from_fact, node_from_atom):
     return steps_from_stream
 
 def get_fluent_instance(external, input_objects, state):
-    import pddl
+    import pddlstream._translate.pddl as pddl
     fluent_facts = map(fact_from_fd, filter(
         lambda f: isinstance(f, pddl.Atom) and (f.predicate in external.fluents), state))
     return external.get_instance(input_objects, fluent_facts=fluent_facts)
 
 def convert_fluent_streams(stream_plan, real_states, action_plan, step_from_fact, node_from_atom):
     #return stream_plan
-    import pddl
+    import pddlstream._translate.pddl as pddl
     assert len(real_states) == len(action_plan) + 1
     steps_from_stream = get_steps_from_stream(stream_plan, step_from_fact, node_from_atom)
 

@@ -399,8 +399,8 @@ def parse_temporal_domain(domain_pddl):
     prefixes = ['pddl', 'normalize']
     deleted = delete_imports(prefixes)
     sys.path.insert(0, translate_path)
-    import pddl
-    import normalize
+    import pddlstream._translate.pddl as pddl
+    import pddlstream._translate.normalize as normalize
     temporal_domain = TemporalDomain(*pddl.tasks.parse_domain(pddl.parser.parse_nested_list(domain_pddl.splitlines())))
     name, requirements, constants, predicates, types, functions, actions, durative_actions, axioms = temporal_domain
     fluents = normalize.get_fluent_predicates(temporal_domain)
@@ -408,8 +408,8 @@ def parse_temporal_domain(domain_pddl):
     sys.path.remove(translate_path)
     delete_imports(prefixes)
     sys.modules.update(deleted) # This is important otherwise classes are messed up
-    import pddl
-    import pddl_parser
+    import pddlstream._translate.pddl as pddl
+    import pddlstream._translate.pddl_parser as pddl_parser
     assert not actions
 
     simple_from_durative = simple_from_durative_action(durative_actions, fluents)
@@ -454,7 +454,7 @@ def convert_args(args):
     return [var.name for var in args]
 
 def convert_condition(condition):
-    import pddl
+    import pddlstream._translate.pddl as pddl
     class_name = condition.__class__.__name__
     # TODO: compare class_name to the pddl class name
     if class_name in ('Truth', 'FunctionComparison'):
@@ -477,7 +477,7 @@ def convert_condition(condition):
     raise NotImplementedError(class_name)
 
 def convert_effects(effects):
-    import pddl
+    import pddlstream._translate.pddl as pddl
     new_effects = make_effects([('_noop',)]) # To ensure the action has at least one effect
     for effect in effects:
         class_name = effect.__class__.__name__
@@ -494,26 +494,26 @@ def convert_effects(effects):
     return new_effects
 
 def convert_axiom(axiom):
-    import pddl
+    import pddlstream._translate.pddl as pddl
     parameters = convert_parameters(axiom.parameters)
     return pddl.Axiom(axiom.name, parameters, len(parameters),
                       convert_condition(axiom.condition).simplified())
 
 def convert_parameters(parameters):
-    import pddl
+    import pddlstream._translate.pddl as pddl
     return [pddl.TypedObject(param.name, param.type) for param in parameters]
 
 SIMPLE_TEMPLATE = '{}-{}'
 
 def expand_condition(condition):
-    import pddl
+    import pddlstream._translate.pddl as pddl
     return [part for part in get_conjunctive_parts(convert_condition(condition).simplified())
             if not isinstance(part, pddl.Truth)]
 
 def convert_durative(durative_actions, fluents):
     # TODO: if static, apply as a condition to all
     from pddlstream.algorithms.advanced import get_predicates
-    import pddl
+    import pddlstream._translate.pddl as pddl
 
     wait_action = make_action(
         name='wait',
@@ -572,7 +572,7 @@ def convert_durative(durative_actions, fluents):
 
 def simple_from_durative_action(durative_actions, fluents):
     from pddlstream.algorithms.advanced import get_predicates
-    import pddl
+    import pddlstream._translate.pddl as pddl
     simple_actions = {}
     for action in durative_actions:
         parameters = convert_parameters(action.parameters)

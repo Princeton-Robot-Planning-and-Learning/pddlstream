@@ -7,8 +7,8 @@ from pddlstream.language.constants import is_parameter
 from pddlstream.utils import Verbose, MockSet, safe_zip, flatten
 
 import copy
-import pddl
-import axiom_rules
+import pddlstream._translate.pddl as pddl
+import pddlstream._translate.axiom_rules as axiom_rules
 
 
 def get_necessary_axioms(conditions, axioms, negative_from_name):
@@ -95,7 +95,7 @@ def is_useful_atom(atom, conditions_from_predicate):
 
 def extraction_helper(state, instantiated_axioms, goals, negative_from_name={}):
     # TODO: filter instantiated_axioms that aren't applicable?
-    import options
+    import pddlstream._translate.options as options
     with Verbose(False):
         # axioms, axiom_init, axiom_layer_dict = axiom_rules.handle_axioms(actions, axioms, goals)
         all_axioms, axiom_layers = axiom_rules.handle_axioms(
@@ -126,9 +126,9 @@ def extraction_helper(state, instantiated_axioms, goals, negative_from_name={}):
     return axiom_plan
 
 def extract_axiom_plan(task, goals, negative_from_name, static_state=set()):
-    import pddl_to_prolog
-    import build_model
-    import instantiate
+    import pddlstream._translate.pddl_to_prolog as pddl_to_prolog
+    import pddlstream._translate.build_model as build_model
+    import pddlstream._translate.instantiate as instantiate
     # TODO: only reinstantiate the negative axioms
     if not negative_from_name:
         return []

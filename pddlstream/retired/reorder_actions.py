@@ -18,7 +18,7 @@ from pddlstream.utils import Verbose, MockSet, neighbors_from_orders
 # Just do the same thing but make the cost 1 if a shared object
 
 def get_stream_instances(stream_plan):
-    import pddl
+    import pddlstream._translate.pddl as pddl
     # TODO: something that inverts the negative items
     stream_instances = [] # TODO: could even apply these to the state directly
     for result in stream_plan:
@@ -31,7 +31,7 @@ def get_stream_instances(stream_plan):
     return stream_instances
 
 def instantiate_axioms(model, static_facts, fluent_facts, axiom_remap={}):
-    import pddl
+    import pddlstream._translate.pddl as pddl
     instantiated_axioms = []
     for atom in model:
         if isinstance(atom.predicate, pddl.Axiom):
@@ -44,10 +44,10 @@ def instantiate_axioms(model, static_facts, fluent_facts, axiom_remap={}):
     return instantiated_axioms
 
 def replace_derived(task, negative_init, action_instances):
-    import pddl_to_prolog
-    import build_model
-    import axiom_rules
-    import pddl
+    import pddlstream._translate.pddl_to_prolog as pddl_to_prolog
+    import pddlstream._translate.build_model as build_model
+    import pddlstream._translate.axiom_rules as axiom_rules
+    import pddlstream._translate.pddl as pddl
 
     original_actions = task.actions
     original_init = task.init

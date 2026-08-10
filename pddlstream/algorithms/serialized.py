@@ -31,7 +31,7 @@ def partition_facts(domain, facts):
     return static_facts, fluent_facts
 
 def apply_actions(domain, state, plan, unit_costs=False):
-    import pddl
+    import pddlstream._translate.pddl as pddl
     # Goal serialization just assumes the tail of the plan includes an abstract action to achieve each condition
     static_state, _ = partition_facts(domain, state)
     print('Static:', static_state)

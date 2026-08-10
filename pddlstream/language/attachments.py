@@ -47,7 +47,7 @@ def compile_fluents_as_attachments(domain, externals):
         raise NotImplementedError('Algorithm does not support fluent streams: {}'.format(
             [stream.name for stream in state_streams]))
 
-    import pddl
+    import pddlstream._translate.pddl as pddl
     domain.constants.append(make_object(PLACEHOLDER_OBJ.pddl))
     for action in domain.actions:
         for effect in action.effects:
@@ -138,7 +138,7 @@ def solve_pyplanners(instantiated, planner=None, max_planner_time=DEFAULT_MAX_TI
     from strips.states import State, PartialState
     from strips.operators import Action, Axiom
     from strips.utils import solve_strips, default_derived_plan
-    import pddl
+    import pddlstream._translate.pddl as pddl
 
     # TODO: PLUSONE costs
     pyplanner = dict(DEFAULT_PYPLANNER)

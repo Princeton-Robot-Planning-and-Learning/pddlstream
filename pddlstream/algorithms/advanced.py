@@ -15,7 +15,8 @@ AUTOMATICALLY_NEGATE = True # TODO: fix Yang's bug
 
 
 def get_predicates(expression):
-    import pddl.conditions
+    import pddlstream._translate.pddl.conditions
+    import pddlstream._translate.pddl as pddl
     if isinstance(expression, pddl.conditions.ConstantCondition):
         return set()
     if isinstance(expression, pddl.conditions.JunctorCondition) or \
@@ -30,7 +31,7 @@ def get_predicates(expression):
 
 
 def universal_to_conditional(action):
-    import pddl
+    import pddlstream._translate.pddl as pddl
     new_parts = []
     unsatisfiable = fd_from_fact((UNSATISFIABLE,))
     for quant in get_conjunctive_parts(action.precondition):
@@ -45,7 +46,7 @@ def universal_to_conditional(action):
 
 
 def process_conditional_effect(effect, negative_from_predicate):
-    import pddl
+    import pddlstream._translate.pddl as pddl
     new_parts = []
     stream_facts = []
     for disjunctive in get_conjunctive_parts(effect.condition):
@@ -66,7 +67,7 @@ def process_conditional_effect(effect, negative_from_predicate):
 
 
 def optimizer_conditional_effects(domain, externals):
-    import pddl
+    import pddlstream._translate.pddl as pddl
     #from pddlstream.algorithms.scheduling.negative import get_negative_predicates
     # TODO: extend this to predicates
     if UNIVERSAL_TO_CONDITIONAL:
@@ -143,7 +144,7 @@ def get_certifiers(externals):
 
 def get_negated_predicates(domain):
     # TODO: generalize to more complicated formulas and recursive axioms
-    import pddl
+    import pddlstream._translate.pddl as pddl
     negated_action_preconditions = set()
     for action in domain.actions:
         for part in get_conjunctive_parts(action.precondition):

@@ -6,7 +6,7 @@ from pddlstream.language.conversion import obj_from_pddl
 
 
 def extract_function_result(results_from_head, action, pddl_args):
-    import pddl
+    import pddlstream._translate.pddl as pddl
     if action.cost is None:
         return None
     # TODO: retrieve constant action costs

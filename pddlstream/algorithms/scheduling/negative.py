@@ -28,7 +28,7 @@ def get_negative_result(negative, input_objects, fluent_facts=frozenset()):
                             call_index=instance.num_calls, optimistic=optimistic)
 
 def convert_negative_stream(negative, literal, step_from_atom, real_states, negative_plan):
-    import pddl
+    import pddlstream._translate.pddl as pddl
     # assert not negative.is_fluent
     fluent_facts_list = []
     if negative.is_fluent:

@@ -75,7 +75,7 @@ def is_constant(arg):
 def add_plan_constraints(constraints, domain, evaluations, goal_exp, internal=False):
     if (constraints is None) or (constraints.skeletons is None):
         return goal_exp
-    import pddl
+    import pddlstream._translate.pddl as pddl
     # TODO: unify this with the constraint ordering
     # TODO: can constrain to use a plan prefix
     prefix = get_internal_prefix(internal)

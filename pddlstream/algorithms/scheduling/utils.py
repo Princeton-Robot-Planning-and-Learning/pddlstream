@@ -27,7 +27,7 @@ def partition_external_plan(external_plan):
 
 def add_unsatisfiable_to_goal(domain, goal_expression):
     #return goal_expression
-    import pddl
+    import pddlstream._translate.pddl as pddl
     from pddlstream.language.optimizer import UNSATISFIABLE
     add_predicate(domain, make_predicate(UNSATISFIABLE, []))
     negated_atom = pddl.NegatedAtom(UNSATISFIABLE, tuple())

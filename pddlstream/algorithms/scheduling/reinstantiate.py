@@ -3,8 +3,8 @@ from pddlstream.algorithms.instantiate_task import get_goal_instance
 from pddlstream.utils import MockSet
 from pddlstream.language.optimizer import UNSATISFIABLE
 
-import pddl
-import instantiate
+import pddlstream._translate.pddl as pddl
+import pddlstream._translate.instantiate as instantiate
 
 def instantiate_unsatisfiable(state, action, var_mapping, negative_from_name={}):
     precondition = []
