@@ -1,7 +1,20 @@
 .idea
 **/*.pyc
+**/__pycache__/
 temp
 visualizations
 statistics
 gurobi.log
 .DS_Store
+
+# FastDownward build output. Produced at install time by setup.py, never committed.
+pddlstream/_downward/builds/
+
+# The original submodule checkout, kept on disk for reference but no longer tracked.
+# The vendored copy at pddlstream/_downward/ is the one that ships.
+/downward/
+
+# Packaging output
+build/
+dist/
+*.egg-info/
