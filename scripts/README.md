@@ -35,7 +35,10 @@ that already has pddlstream.
 `make` and a C++ compiler must be present. `cmake` does not — it is pulled in as a build
 dependency from PyPI.
 
-The first install compiles FastDownward and takes a few minutes. Installing from a git
-ref also pulls the `examples/pybullet/utils` submodule (~400 MB, mostly robot meshes),
+A full run takes well under a minute on a many-core machine — FastDownward compiles in
+parallel. Installing from a git ref also pulls the `examples/pybullet/utils` submodule,
 because pip runs `git submodule update --init --recursive` on any repository that has a
-`.gitmodules`. Use the local-checkout form to avoid that while iterating.
+`.gitmodules`. That is ~400 MB of robot meshes but only a few seconds on a fast
+connection; the local-checkout form skips it entirely.
+
+Verified on Python 3.10 and 3.13. The script uses whichever `python3` is on `PATH`.
