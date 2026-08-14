@@ -2,7 +2,7 @@
 # Install pddlstream into a throwaway virtualenv and check that it can actually plan.
 #
 #   ./scripts/verify_install.sh                     # install from the default git ref
-#   ./scripts/verify_install.sh packaging           # a branch, tag or SHA
+#   ./scripts/verify_install.sh v0.2.0              # a branch, tag or SHA
 #   ./scripts/verify_install.sh .                   # a local checkout (fast, no clone)
 #
 # Override the repository with PDDLSTREAM_REPO.
@@ -10,8 +10,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TARGET="${1:-packaging}"
-REPO="${PDDLSTREAM_REPO:-https://github.com/Minseo10/pddlstream.git}"
+TARGET="${1:-main}"
+REPO="${PDDLSTREAM_REPO:-https://github.com/Princeton-Robot-Planning-and-Learning/pddlstream.git}"
 
 if [ -d "$TARGET" ]; then
     SOURCE="$(cd "$TARGET" && pwd)"

@@ -5,11 +5,28 @@ PDDLStream extends Planning Domain Definition Language (PDDL) by introducing str
 PDDLStream algorithms are domain independent and solve PDDLStream problems with only a blackbox description of each sampler.
 The motivating application of PDDLStream was for general-purpose robot Task and Motion Planning (TAMP). 
 
-The [default](https://github.com/caelan/pddlstream) **pddlstream** branch ([main](https://github.com/caelan/pddlstream/tree/stable)) is the newest stable "release" of **pddlstream**.
-The [downward](https://github.com/caelan/pddlstream/tree/master) **pddlstream** branch is the most recent and advanced version of **pddlstream** but also is somewhat experimental.
-
 <!--https://www.markdownguide.org/basic-syntax/-->
 <!--https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet-->
+
+## About this fork
+
+This is a fork of [caelan/pddlstream](https://github.com/caelan/pddlstream), branched at
+[`2c7d6f5`](https://github.com/caelan/pddlstream/commit/2c7d6f514b07ed018e18710192aa0f91c2e70ee2),
+that installs with `pip`. Three things differ from upstream:
+
+* **FastDownward is vendored and built at install time.** It lives at
+  `pddlstream/_downward` (not in a `downward` submodule), and is compiled during the
+  build. Only the stripped search
+  binary (~3 MB) is shipped in the wheel.
+* **The PDDL translator is vendored at `pddlstream/_translate`.** Upstream reaches it by
+  appending the FastDownward build directory to `sys.path`, which puts `pddl`, `options`,
+  `tools`, `normalize` and `instantiate` on the top-level namespace of anything that
+  imports pddlstream. Here it is imported under its own absolute name and leaks nothing.
+  See [`pddlstream/_translate/README.md`](pddlstream/_translate/README.md).
+* **FastDownward is located relative to the installed package** instead of relative to a
+  source checkout, with an `FD_PATH` environment variable to override it.
+
+The planner, the algorithms, the language and the examples are unchanged. 
 
 ## Publications
 
@@ -39,33 +56,58 @@ Most notably, it adheres to PDDL conventions and syntax whenever possible and co
 
 ## Installation
 
-<!--$ git clone --recursive --branch main https://github.com/caelan/pddlstream.git-->
+### Default installation
 ```
-$ git clone --recursive --branch main git@github.com:caelan/pddlstream.git
+$ pip install git+https://github.com/Princeton-Robot-Planning-and-Learning/pddlstream.git@v0.2.0
+```
+
+- FastDownward is compiled during the build.
+- Requires Python 3.8 or newer.
+- `make` and a C++ compiler must be present. `cmake` does not need to be installed on the
+  system — it is pulled in from PyPI as a build dependency.
+  - APT (Linux): `$ sudo apt-get install g++ g++-multilib make`
+- Installs ~400 MB, almost all of it robot meshes under
+  `examples/pybullet/utils/models`.
+- In CI, pin a full 40-character SHA rather than a tag. pip only caches the built wheel
+  for full SHAs, so a tag recompiles FastDownward on every run.
+
+### Installation with PyBullet
+
+```
+$ pip install "pddlstream[pybullet] @ git+https://github.com/Princeton-Robot-Planning-and-Learning/pddlstream.git@v0.2.0"
+```
+
+- Adds the simulator (`pybullet`, `scipy`). The example code and asset files ship with
+  either install; this only makes the PyBullet examples runnable.
+
+
+If the FastDownward build fails, see its
+[documentation](http://www.fast-downward.org/ObtainingAndRunningFastDownward) for more
+detailed build instructions.
+
+
+### Verifying an install
+
+From a checkout of this repository:
+
+```
+pddlstream$ ./scripts/verify_install.sh v0.2.0
+```
+
+- This installs into a virtualenv, solves a small problem end to end, and checks
+that the search binary shipped and that the translator leaked no top-level module names.
+See [scripts/README.md](scripts/README.md) for details.
+
+### Working from a checkout
+
+```
+$ git clone --recursive https://github.com/Princeton-Robot-Planning-and-Learning/pddlstream.git
 $ cd pddlstream
-pddlstream$ git submodule update --init --recursive
-pddlstream$ ./downward/build.py
+pddlstream$ ./pddlstream/_downward/build.py
 ```
-<!--```
-$ git clone --recursive https://github.com/caelan/pddlstream.git
 
-If building fails, install FastDownward's dependencies using your package manager:
-* APT (Linux): `$ sudo apt-get install cmake g++ g++-multilib make python`
-<!--* Homebrew (OS X): TBD
-* MacPorts (OS X): TBD
-* N/A (Windows): install each dependency manually-->
-
-If necessary, see FastDownward's [documentation](http://www.fast-downward.org/ObtainingAndRunningFastDownward) for more detailed installation instructions.
-
-<!--My FastDownward "fork" is several years old. If you have trouble compiling FastDownward on a newer machine, try installing the experimental [downward](https://github.com/caelan/pddlstream/tree/downward) PDDLStream branch.-->
-
-PDDLStream actively supports python2.7 as well as the most recent version of python3.
-<!--(many robotics applications still require python2.7)-->
-
-Make sure to recursively update **pddlstream**'s submodules when pulling new commits.
-```
-pddlstream$ git pull --recurse-submodules
-```
+- A checkout shadows any installed copy on `sys.path`, so FastDownward has to be built in
+place as above, or `FD_PATH` pointed at an installed `site-packages/pddlstream/_downward`.
 
 ## Examples
 
