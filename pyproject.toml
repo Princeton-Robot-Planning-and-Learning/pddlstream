@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pddlstream"
-version = "0.1.0"
+version = "0.2.0"
 description = "PDDLStream: Integrating Symbolic Planners and Blackbox Samplers"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -19,9 +19,13 @@ Upstream = "https://github.com/caelan/pddlstream"
 viz = ["pygraphviz", "matplotlib"]
 # Imported lazily by pddlstream.utils.get_peak_memory.
 memory = ["psutil"]
+# For pybullet examples. 
+# Pulls in the simulator. scipy is left commented out in
+# ss-pybullet's requirements.txt but motion_planners.nearest imports it unconditionally.
+pybullet = ["pybullet", "scipy"]
 
 [tool.setuptools.packages.find]
-include = ["pddlstream*"]
+include = ["pddlstream*", "examples*"]
 
 [tool.setuptools.package-data]
 # The FastDownward search binary, compiled by setup.py at build time. Only the binary is
@@ -29,3 +33,12 @@ include = ["pddlstream*"]
 # leaves in builds/release/bin/translate/ is inert.
 pddlstream = ["_downward/builds/release/bin/downward"]
 "pddlstream._translate" = ["README.md"]
+
+# Every example reads its domain and stream definitions from disk at runtime, and the
+# non-pybullet examples load .obj/.sdf geometry the same way.
+"*" = ["*.pddl", "*.obj", "*.sdf"]
+
+# ss-pybullet (examples/pybullet/utils) keeps its robot descriptions, IR databases and
+# problem geometry in plain directories rather than packages, so packages.find cannot see
+# them. The pybullet examples open these paths at runtime, so they have to ship.
+"examples.pybullet.utils" = ["models/**", "databases/**", "problems/**"]
