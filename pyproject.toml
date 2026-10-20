@@ -24,14 +24,21 @@ memory = ["psutil"]
 # ss-pybullet's requirements.txt but motion_planners.nearest imports it unconditionally.
 pybullet = ["pybullet", "scipy"]
 
+[tool.setuptools]
+# MANIFEST.in supplies C++ sources to the sdist, not to the binary wheel.
+include-package-data = false
+
 [tool.setuptools.packages.find]
 include = ["pddlstream*", "examples*"]
+# FastDownward is a standalone executable, not an importable Python package.
+# In particular, transient CMake directories must never become packages.
+exclude = ["pddlstream._downward*", "*.build", "*.build.*"]
 
 [tool.setuptools.package-data]
 # The FastDownward search binary, compiled by setup.py at build time. Only the binary is
 # shipped: pddlstream imports the translator from pddlstream._translate, so the copy CMake
 # leaves in builds/release/bin/translate/ is inert.
-pddlstream = ["_downward/builds/release/bin/downward"]
+pddlstream = ["_downward/builds/release/bin/downward", "_downward/LICENSE.md"]
 "pddlstream._translate" = ["README.md"]
 
 # Every example reads its domain and stream definitions from disk at runtime, and the
