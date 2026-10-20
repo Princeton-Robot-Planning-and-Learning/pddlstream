@@ -10,7 +10,8 @@ import shutil
 import subprocess
 import sys
 
-from setuptools import setup
+from setuptools import Distribution, setup
+from setuptools.command.bdist_wheel import bdist_wheel
 from setuptools.command.build_py import build_py
 
 DOWNWARD = pathlib.Path(__file__).parent.resolve() / "pddlstream" / "_downward"
@@ -33,4 +34,22 @@ class BuildFastDownward(build_py):
         super().run()
 
 
-setup(cmdclass={"build_py": BuildFastDownward})
+class PlatformDistribution(Distribution):
+    """Install the bundled native executable into the platform library directory."""
+
+    def has_ext_modules(self):
+        return True
+
+
+class PlatformWheel(bdist_wheel):
+    """FastDownward depends on the platform, but not on the Python ABI."""
+
+    def get_tag(self):
+        _, _, platform = super().get_tag()
+        return "py3", "none", platform
+
+
+setup(
+    distclass=PlatformDistribution,
+    cmdclass={"build_py": BuildFastDownward, "bdist_wheel": PlatformWheel},
+)
