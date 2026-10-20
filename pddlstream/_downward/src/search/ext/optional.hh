@@ -2249,16 +2249,14 @@ public:
     return *this;
   }
 
-  /// Constructs the value in-place, destroying the current one if there is
-  /// one.
-  ///
+  /// Rebinds this optional to an lvalue; it does not construct an owned value.
+  /// Adapted from https://github.com/TartanLlama/optional (reference emplace).
   /// \group emplace
-  template <class... Args> T &emplace(Args &&... args) noexcept {
-    static_assert(std::is_constructible<T, Args &&...>::value,
-                  "T must be constructible with Args");
-
-    *this = nullopt;
-    this->construct(std::forward<Args>(args)...);
+  template <class U = T,
+            detail::enable_if_t<!detail::is_optional<detail::decay_t<U>>::value>
+                * = nullptr>
+  T &emplace(U &&u) noexcept {
+    *this = std::forward<U>(u);
     return value();
   }
 
